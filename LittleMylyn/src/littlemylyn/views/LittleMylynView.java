@@ -5,6 +5,7 @@ import org.eclipse.ui.part.*;
 
 import littlemylyn.entities.Task;
 import littlemylyn.model.FakeFetcher;
+import littlemylyn.model.Node;
 
 import java.util.List;
 
@@ -45,14 +46,7 @@ public class LittleMylynView extends ViewPart {
 
 		@Override
 		public Object[] getChildren(Object arg0) {
-			if (arg0 instanceof Task) {
-				Task t = (Task) arg0;
-				return new Object[] { t.getType(), t.getStat(), t.getClassRelated() };
-			} else if (arg0 instanceof List) {
-				List<String> classList = (List<String>) arg0;
-				return classList.toArray(new String[classList.size()]);
-			}
-			return null;
+			return((Node)arg0).getChildren().toArray();
 		}
 
 		@Override
@@ -63,12 +57,7 @@ public class LittleMylynView extends ViewPart {
 
 		@Override
 		public boolean hasChildren(Object arg0) {
-			if (arg0 instanceof Task) {
-				return true;
-			} else if (arg0 instanceof List) {
-				return ((List<String>) arg0).size() > 0;
-			}
-			return false;
+			return ((Node)arg0).hasChildren();
 		}
 
 		@Override
@@ -100,12 +89,6 @@ public class LittleMylynView extends ViewPart {
 	class ViewLabelProvider extends LabelProvider {
 
 		public String getText(Object obj) {
-			if (obj instanceof Task) {
-				Task t = (Task) obj;
-				return type2Str(t.getType()) + " " + stat2Str(t.getStat()) + " " + t.getTitle();
-			} else if (obj instanceof List) {
-				return "Related Class(" + ((List<String>) obj).size() + ")";
-			}
 			return obj.toString();
 		}
 
