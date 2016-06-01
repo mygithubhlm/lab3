@@ -18,6 +18,16 @@ public class Task {
 	private ArrayList<String> classRelated;
 	
 	
+	
+	public Task(int taskId, String title, int type, int stat) {
+		super();
+		this.taskId = taskId;
+		this.title = title;
+		this.type = type;
+		this.stat = stat;
+	}
+	
+	
 	// getter and setter, auto-generated code
 	public int getTaskId() {
 		return taskId;

@@ -1,0 +1,22 @@
+[
+  {
+    "taskId":123123,
+    "title":"Panda",
+    "type":0,
+    "stat":0,
+    "classRelated":
+    [
+      "classA",
+      "classB"  
+    ]
+  },
+  {
+    "taskId":123,
+    "title":"Numpy",
+    "type":1,
+    "stat":0,
+    "classRelated":
+    [
+    ]
+  }  
+]
