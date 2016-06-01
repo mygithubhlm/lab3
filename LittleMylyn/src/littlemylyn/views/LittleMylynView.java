@@ -4,8 +4,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.*;
 
 import littlemylyn.entities.Task;
-import littlemylyn.model.FakeFetcher;
+import littlemylyn.model.ITaskManager;
 import littlemylyn.model.Node;
+import littlemylyn.model.TaskManager;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import org.eclipse.swt.SWT;
 
 public class LittleMylynView extends ViewPart {
 
-	FakeFetcher f = new FakeFetcher();
+	ITaskManager f = new TaskManager();
 	List<Task> nodesList = f.getTasks();
 	Task[] nodesArray = nodesList.toArray(new Task[nodesList.size()]);
 

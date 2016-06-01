@@ -1,6 +1,8 @@
 package littlemylyn.entities;
 
 import java.util.ArrayList;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import littlemylyn.model.Node;
@@ -38,6 +40,21 @@ public class Task extends Node {
 		this.type = type;
 		this.stat = stat;
 		this.classRelated=new ArrayList<String>();
+	}
+	
+	
+	// to construct a task instance from the JsonObject
+	public Task(JSONObject jobj){
+		super();
+		this.taskId=jobj.getInt("taskId");
+		this.title=jobj.getString("title");
+		this.type=jobj.getInt("type");
+		this.stat=jobj.getInt("stat");
+		JSONArray jaClasses=jobj.getJSONArray("classRelated");
+		this.classRelated=new ArrayList<String>();
+		for(int i=0;i<jaClasses.length();i++){
+			this.classRelated.add(jaClasses.getString(i));
+		}
 	}
 
 	// getter and setter, auto-generated code
