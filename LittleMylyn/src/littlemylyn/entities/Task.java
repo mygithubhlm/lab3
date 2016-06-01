@@ -68,6 +68,7 @@ public class Task {
 			if(classRelated.get(i).equals(className)){
 				return true;
 			}
+			i++;
 		}
 		
 		return false;
@@ -80,7 +81,6 @@ public class Task {
 		obj.put("taskId",taskId ).put("title", title)
 		.put("type",type).put("stat", stat).put("classRelated", classRelated);
 		return obj;
-		
 	}
 	
 	
