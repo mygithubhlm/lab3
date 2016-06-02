@@ -20,7 +20,10 @@ public class TaskManager implements ITaskManager {
 	public TaskManager(){
 		tasks=new ArrayList<Task>();
 		transferer=new Transferer();
-		this.initialize();
+		if(!this.initialize()){
+			System.err.println("Error when initialization");
+		}
+		
 		
 	}
 	
@@ -46,10 +49,9 @@ public class TaskManager implements ITaskManager {
 	}
 	
 	
-	
+	// please refer to the interface
 	@Override
 	public boolean addTask(Task newTask) {
-		// TODO Auto-generated method stub
 		int i = 0;
 		while(i<tasks.size()){
 			if(newTask.getTaskId()==tasks.get(i).getTaskId())
@@ -58,10 +60,11 @@ public class TaskManager implements ITaskManager {
 		tasks.add(newTask);
 		return true;
 	}
-
+	
+	
+	// please refer to the interface
 	@Override
 	public boolean removeTask(Task parTask) {
-		// TODO Auto-generated method stub
 		int i = 0;
 		while(i<tasks.size()){
 			if(parTask.getTaskId()==tasks.get(i).getTaskId()){
@@ -72,9 +75,10 @@ public class TaskManager implements ITaskManager {
 		return false;
 	}
 
+	
+	// please refer to the interface
 	@Override
 	public boolean updateTask(Task parTask) {
-		// TODO Auto-generated method stub
 		int i = 0;
 		while(i<tasks.size()){
 			if(parTask.getTaskId()==tasks.get(i).getTaskId()){
@@ -86,16 +90,23 @@ public class TaskManager implements ITaskManager {
 		return false;
 	}
 
+	// please refer to the interface
 	@Override
 	public ArrayList<Task> getTasks() {
-		// TODO Auto-generated method stub
 		return tasks;
 	}
 
+	
+	// output the data into a json file
 	@Override
 	public boolean dump() {
-		// TODO Auto-generated method stub
-		return false;
+		//to convert the Task Arraylist to a jsonarray 
+		JSONArray jarr=new JSONArray();
+		for(int i=0;i<tasks.size();i++){
+			jarr.put(tasks.get(i).toJson());
+		}
+		
+		return transferer.dumpTo(jarr, dir+"/"+filename);
 	}
 
 }

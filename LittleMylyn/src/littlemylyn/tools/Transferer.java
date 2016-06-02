@@ -25,7 +25,7 @@ public class Transferer implements ITransferer {
 						file.createNewFile();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
-						System.out.println("Error when open file");
+						System.err.println("Error when open file");
 					}
 				}
 				
@@ -40,15 +40,15 @@ public class Transferer implements ITransferer {
 						data.append(temp);
 					}
 				} catch (FileNotFoundException e) {
-					System.out.println("Error file not found");
+					System.err.println("Error file not found");
 				} catch (IOException e) {
-					System.out.println("Error with IO");
+					System.err.println("Error with IO");
 				} finally {
 					if (reader != null) {
 						try {
 							reader.close();
 						} catch (IOException e) {
-							System.out.println("Error with IO");
+							System.err.println("Error with IO");
 						}
 					}
 				}
@@ -75,7 +75,7 @@ public class Transferer implements ITransferer {
 		    fw.close();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			System.out.println("Error When Dumpping");
+			System.err.println("Error When Dumpping");
 			return false;
 		}
 		
