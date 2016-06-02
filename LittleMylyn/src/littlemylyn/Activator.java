@@ -16,29 +16,33 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	private static ResMonitor resMonitor;
-	
+
 	/**
 	 * The constructor
 	 */
 	public Activator() {
-		
+
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 * 
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.
+	 * BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		resMonitor=ResMonitor.getMonitor();
+		resMonitor = ResMonitor.getMonitor();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 * 
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.
+	 * BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
 		ResMonitor.shutdown();
@@ -56,10 +60,11 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path
+	 * Returns an image descriptor for the image file at the given plug-in
+	 * relative path
 	 *
-	 * @param path the path
+	 * @param path
+	 *            the path
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
