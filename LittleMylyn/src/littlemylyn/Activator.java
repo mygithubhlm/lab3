@@ -4,6 +4,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import littlemylyn.controllers.ResMonitor;
+
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -15,10 +17,13 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 	
+	private static ResMonitor resMonitor;
+	
 	/**
 	 * The constructor
 	 */
 	public Activator() {
+		
 	}
 
 	/*
@@ -28,6 +33,7 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		resMonitor=ResMonitor.getMonitor();
 	}
 
 	/*
@@ -35,6 +41,7 @@ public class Activator extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
+		ResMonitor.shutdown();
 		plugin = null;
 		super.stop(context);
 	}

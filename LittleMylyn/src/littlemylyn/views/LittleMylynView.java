@@ -16,7 +16,7 @@ import org.eclipse.swt.SWT;
 
 public class LittleMylynView extends ViewPart {
 
-	ITaskManager f = new TaskManager();
+	ITaskManager f = TaskManager.getManager();
 	List<Task> nodesList = f.getTasks();
 	Task[] nodesArray = nodesList.toArray(new Task[nodesList.size()]);
 

@@ -17,7 +17,7 @@ public class TaskManager implements ITaskManager {
 	private ArrayList<Task> tasks;
 	
 	
-	public TaskManager(){
+	private TaskManager(){
 		tasks=new ArrayList<Task>();
 		transferer=new Transferer();
 		if(!this.initialize()){
