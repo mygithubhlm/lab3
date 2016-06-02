@@ -1,22 +1,25 @@
 package littlemylyn.views;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.*;
-
-import littlemylyn.entities.Task;
-import littlemylyn.model.ITaskManager;
-import littlemylyn.model.Node;
-import littlemylyn.model.TaskManager;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.SWT;
+import littlemylyn.entities.Task;
+import littlemylyn.model.ITaskManager;
+import littlemylyn.model.Node;
+import littlemylyn.model.NodeWrapper;
+import littlemylyn.model.TaskManager;
+
+import java.util.List;
 
 public class LittleMylynView extends ViewPart {
-	static LittleMylynView instance;
+
+	private Action doubleClickAction;
 
 	ITaskManager f = TaskManager.getManager();
 	List<Task> nodesList = f.getTasks();
@@ -28,20 +31,17 @@ public class LittleMylynView extends ViewPart {
 	public static final String ID = "littlemylyn.views.DefaultView";
 
 	private TreeViewer viewer;
-	// private DrillDownAdapter drillDownAdapter;
 
 	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
 
 		@Override
 		public void dispose() {
 			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
 			// TODO Auto-generated method stub
-
 		}
 
 		@Override
@@ -73,12 +73,10 @@ public class LittleMylynView extends ViewPart {
 		}
 
 		public Image getImage(Object obj) {
-			// String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
-			// if (obj instanceof TreeParent)
-			// imageKey = ISharedImages.IMG_OBJ_FOLDER;
-			// return
-			// PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
-			return null;
+			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
+			if (obj instanceof Task)
+				imageKey = ISharedImages.IMG_OBJ_FOLDER;
+			return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
 		}
 	}
 
@@ -87,13 +85,6 @@ public class LittleMylynView extends ViewPart {
 	public LittleMylynView() {
 	}
 
-	// public static synchronized LittleMylynView getInstance() {
-	// if (instance == null) {
-	// instance = new LittleMylynView();
-	// }
-	// return instance;
-	// }
-
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		// drillDownAdapter = new DrillDownAdapter(viewer);
@@ -101,6 +92,38 @@ public class LittleMylynView extends ViewPart {
 		viewer.setLabelProvider(new ViewLabelProvider());
 		// viewer.setSorter(new NameSorter());
 		viewer.setInput(nodesArray);
+		makeActions();
+		hookDoubleClickAction();
+	}
+
+	private void makeActions() {
+		doubleClickAction = new Action() {
+			public void run() {
+				ISelection selection = viewer.getSelection();
+				Object obj = ((IStructuredSelection) selection).getFirstElement();
+				if (obj instanceof Task) {
+					changeTask((Task) obj);
+				} else if ((obj instanceof NodeWrapper) && (((NodeWrapper) obj).getParent() instanceof List)) {
+					// TODO This is for Niu1234.
+				}
+			}
+		};
+	}
+
+	private void hookDoubleClickAction() {
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				doubleClickAction.run();
+			}
+		});
+	}
+
+	private void changeTask(Task t) {
+		ChangeStatDialog dialog = new ChangeStatDialog(this.getViewSite().getShell(), t.getStat());
+		if (dialog.open() != InputDialog.OK)
+			return;
+		System.out.println(dialog.getStat());
+		t.setStat(dialog.getStat());
 	}
 
 	public void setFocus() {
