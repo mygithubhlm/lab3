@@ -3,10 +3,10 @@ package littlemylyn.model;
 import java.util.ArrayList;
 
 public class RelatedClasses extends NodeWrapper<ArrayList<NodeWrapper<String>>> {
+	Object p;
 
-
-	public RelatedClasses(ArrayList<NodeWrapper<String>> _dat) {
-		super(_dat);
+	public RelatedClasses(ArrayList<NodeWrapper<String>> _dat,Object p) {
+		super(_dat,p);
 		// TODO Auto-generated constructor stub
 	}
 

@@ -132,12 +132,15 @@ public class Task extends Node {
 	public ArrayList<Object> getChildren() {
 		// TODO Auto-generated method stub
 		ArrayList<Object> children=new ArrayList<Object>();
-		children.add(new NodeWrapper<String>(Task.typeDic[this.type]));
-		children.add(new NodeWrapper<String>(Task.statDic[this.stat]));
+		children.add(new NodeWrapper<String>(Task.typeDic[this.type],this));
+		children.add(new NodeWrapper<String>(Task.statDic[this.stat],this));
+		
 		ArrayList<NodeWrapper<String>> classRelatedN=new ArrayList<NodeWrapper<String>>();
 		for(int i=0;i<this.classRelated.size();i++)
-			classRelatedN.add(new NodeWrapper<String>(this.classRelated.get(i)));
-		children.add(new RelatedClasses(classRelatedN));
+			classRelatedN.add(new NodeWrapper<String>(this.classRelated.get(i),classRelatedN));
+		
+		children.add(new RelatedClasses(classRelatedN,this));
+		
 		return  children;						
 	}
 
@@ -151,6 +154,10 @@ public class Task extends Node {
 	@Override
 	public boolean hasChildren(){
 		return true;
+	}
+	
+	public Object getParent(){
+		return null;
 	}
 	
 	

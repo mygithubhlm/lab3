@@ -2,7 +2,10 @@ package littlemylyn.controllers;
 
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 
 import littlemylyn.model.TaskManager;
 
@@ -40,8 +43,29 @@ public class ResMonitor implements IResourceChangeListener {
 	@Override
 	public void resourceChanged(IResourceChangeEvent ev) {
 		// TODO Auto-generated method stub
-		System.out.println("_______________________________");
-		System.err.println(ev.getDelta().getResource().toString());
+		try {
+			ev.getDelta().accept(new IResourceDeltaVisitor(){
+				public boolean visit(IResourceDelta delta){
+					String resname=delta.getResource().toString();
+					if(filterClass(resname)!=null){
+						//add 
+					}
+					return true;
+				}
+			});
+		} catch (CoreException e) {
+			System.err.println("Error when visit delta file");
+		}
 	}
+	
+	
+	
+	//some tool methods only for this class to use
+	
+	//filter out the java class name otherwise return null
+	public String filterClass(String resourceName){
+		return (resourceName.endsWith("java"))? resourceName:null;
+	}
+
 
 }
