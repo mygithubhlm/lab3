@@ -63,5 +63,11 @@
          class="littlemylyn.handlers.NewTaskHandler">
       </handler> 
    </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+   </extension>
    
 </plugin>
