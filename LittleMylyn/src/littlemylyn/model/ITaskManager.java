@@ -10,17 +10,11 @@ import littlemylyn.entities.Task;
 // please use Transferer as your component.
 
 
-public interface ITaskManager {
+public interface ITaskManager extends Comparable<ITaskManager> {
 	/* add a new task to the model 
 	 * input: a task instance from handler
 	 */
-	public boolean addTask(Task newTask);
-	
-	/*
-	 * remove a task from the model
-	 * input: a partial completed task instance, only field taskId is filled up
-	 * */
-	public boolean removeTask(Task parTask);
+	public void addTask(Task newTask);
 	
 	
 	/*
@@ -42,13 +36,21 @@ public interface ITaskManager {
 	 * */
 	public boolean dump();  
 	
+
+
 	
-	// other advanced things should be done later, like filter and search(may be not)
-	
-	
-	
-	
-	
+	// add related class to the unique activated class if not exist return false;
+	public boolean addRelatedClass(String resname);
 	
 	
+	// return the count of task in the manager
+	public int getTaskCount();
+	
+	
+	public int compareTo(ITaskManager _manager);
+
+
+	//return a reference to the uinque activated clas
+	public Task getActivatedTask();
+
 }
