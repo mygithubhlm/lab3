@@ -68,7 +68,7 @@ public class Transferer implements ITransferer {
 	    FileWriter fw;
 		try {
 			fw = new FileWriter(path);
-		    PrintWriter out = new PrintWriter(fw);
+		    PrintWriter out = new PrintWriter(fw);  
 		    out.write(jobj.toString());
 		    out.println();
 		    out.close();

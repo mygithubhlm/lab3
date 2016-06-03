@@ -13,7 +13,7 @@ import littlemylyn.model.RelatedClasses;
  * a bare entity class with no logic
  * */
 
-public class Task extends Node {
+public class Task extends Node implements Comparable<Task> {
 	
 	private int taskId; // which is a generated random long numeric sequence
 	private String title;
@@ -21,14 +21,12 @@ public class Task extends Node {
 	private int stat;// 0: new, 1:activated, 2: finished
 	private ArrayList<String> classRelated;
 
-	private final static String[] typeDic={"debug","new feature","refactor"};
-	private final static String[] statDic={"new","activated","finished"};
-	
+	public final static String[] typeDic={"debug","new feature","refactor"};
+	public final static String[] statDic={"new","activated","finished"};
+	public final static int[][] notransDic={{},{0},{0}};
 	
 
-	public final ArrayList<String> getClassRelated() {
-		return classRelated;
-	}
+
 
 	
 	
@@ -92,6 +90,13 @@ public class Task extends Node {
 
 	// operation for related classes
 
+
+	
+	public int getClassCount(){
+		return this.classRelated.size();
+	}
+	
+	
 	// remove a existed related class
 	public boolean removeClass(String className) {
 		return classRelated.remove(className);
@@ -100,8 +105,11 @@ public class Task extends Node {
 	// add a non-repetitive related class
 	public boolean addClass(String className) {
 		// already added
-		if (hasClass(className))
+		if (hasClass(className)){
+			System.out.println("Failure: duplicated class");
 			return false;
+		}
+
 
 		classRelated.add(className);
 		return true;
@@ -134,15 +142,28 @@ public class Task extends Node {
 		ArrayList<Object> children=new ArrayList<Object>();
 		children.add(new NodeWrapper<String>(Task.typeDic[this.type],this));
 		children.add(new NodeWrapper<String>(Task.statDic[this.stat],this));
-		
 		ArrayList<NodeWrapper<String>> classRelatedN=new ArrayList<NodeWrapper<String>>();
 		for(int i=0;i<this.classRelated.size();i++)
-			classRelatedN.add(new NodeWrapper<String>(this.classRelated.get(i),classRelatedN));
+			classRelatedN.add(new NodeWrapper<String>(this.refineClass(this.classRelated.get(i)),classRelatedN));
 		
 		children.add(new RelatedClasses(classRelatedN,this));
 		
 		return  children;						
 	}
+
+	// a tool method for a beau format class, assume components are more than 3
+	private String refineClass(String resname){
+		String[] components=resname.split("/");
+		String refined=components[1]+"/"+components[2]+"/ ";
+		
+		for(int i=3;i<components.length-1;i++){
+			refined+=components[i]+".";
+		}
+		
+		return refined+components[components.length-1].replace(".java", "");
+	}
+	
+	
 
 
 	@Override
@@ -161,5 +182,55 @@ public class Task extends Node {
 	}
 	
 	
+
+	
+	
+	
+	//which only diff them
+	@Override
+	public int compareTo(Task o) {
+		// TODO Auto-generated method stub
+		return (o.getStat()==this.getStat()&&o.getClassCount()==this.getClassCount())? 0:1;
+	}
+	
+	
+	//a deep clone method for this entity class
+	@Override
+	public Task clone(){
+		Task task=new Task(this.taskId, this.title, this.type, this.stat);
+		for(int i=0;i<this.classRelated.size();i++){
+			task.addClass(this.classRelated.get(i));
+		}
+		return task;
+	}
+	
+	
+	
+	
+	//some constant get method
+	public static int NEW_NUM(){
+		return 0;
+	}
+	
+	public static int ACT_NUM(){
+		return 1;
+	}
+	
+	public static int FIN_NUM(){
+		return 2;
+	}
+	
+	//whether is an activated task
+	public boolean isActivated(){
+		return this.getStat()==ACT_NUM();
+	}
+	
+	public boolean isFinished(){
+		return this.getStat()==FIN_NUM();
+	}
+	
+	public boolean isNew(){
+		return this.getStat()==NEW_NUM();
+	}
 	
 }

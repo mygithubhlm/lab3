@@ -9,18 +9,33 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
+import littlemylyn.entities.Task;
+import littlemylyn.model.TaskManager;
+
 public class ChangeStatDialog extends Dialog {
 
-	private int stat;// 0: new, 1:activated, 2: finished
-	Button button_1, button_2, button_3;
 
-	public ChangeStatDialog(Shell parentShell, int stat) {
+	private Task task;
+	private Button[] options;
+	private BatchListener blistener;
+
+	public ChangeStatDialog(Shell parentShell,Task _task) {
 		super(parentShell);
-		this.stat = stat;
+		this.task=_task;
+		this.options=new Button[3];
+		blistener=new BatchListener(task);
+		
 	}
+	
+	public Task getTask(){
+		return task;
+	}
+	
+	
 
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
@@ -37,72 +52,75 @@ public class ChangeStatDialog extends Dialog {
 
 	}
 
+	
+
+	
 	private void createTypeRadioGroup(Composite parent) {
 
 		final Group typeGroup = new Group(parent, SWT.NONE);
 		typeGroup.setLayout(new GridLayout(3, true));
-		typeGroup.setText("Stat: ");
-
-		final Button button_1 = new Button(typeGroup, SWT.RADIO);
-		this.button_1 = button_1;
-		button_1.setText("New");
-		button_1.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (button_1.getSelection()) {
-					stat = 0;
-				}
-			}
-		});
-
-		final Button button_2 = new Button(typeGroup, SWT.RADIO);
-		this.button_2 = button_2;
-		button_2.setText("Activated");
-		button_2.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (button_2.getSelection()) {
-					stat = 1;
-				}
-			}
-		});
-
-		final Button button_3 = new Button(typeGroup, SWT.RADIO);
-		this.button_3 = button_3;
-		button_3.setText("Finished");
-		button_3.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (button_3.getSelection()) {
-					stat = 2;
-				}
-			}
-		});
+		typeGroup.setText("State");
+		
+		for(int i=0;i<this.options.length;i++){
+			options[i]=new Button(typeGroup,SWT.RADIO);
+			options[i].setText(Task.statDic[i]);
+			options[i].addSelectionListener(this.blistener);
+		}
+		
+		
 
 	}
-
-	private void initContent() {
-		button_1.setSelection(false);
-		button_2.setSelection(false);
-		button_3.setSelection(false);
-		switch (stat) {
-		case 0:
-			button_1.setSelection(true);
-			break;
-		case 1:
-			button_2.setSelection(true);
-			button_1.setEnabled(false);
-			break;
-		case 2:
-			button_3.setSelection(true);
-			button_1.setEnabled(false);
-			break;
+	
+	
+	
+	//internal listener class
+	class BatchListener extends SelectionAdapter{
+		private Task task;
+		public BatchListener(Task _task){
+			this.task=_task;
+		}
+		public void widgetSelected(SelectionEvent e) {
+			Button curOption=(Button)(e.getSource());
+			//update the task here
+			task.setStat(getType(curOption));
 		}
 	}
+	
+	
+	
+	// init the selected with some contraints
+	private void initContent(){
+		// add transition contraints
+		for(int i=0;i<Task.notransDic[task.getStat()].length;i++){
+			options[i].setEnabled(false);
+		}
 
+		
+		// add activated contraints
+		if(TaskManager.getManager().getActivatedTask()!=null){
+			options[Task.ACT_NUM()].setEnabled(false);
+		}
+		
+		// init the current state
+		options[task.getStat()].setEnabled(true);
+		options[task.getStat()].setSelection(true);
+	}
+
+
+	
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Change State");
 	}
 
-	public int getStat() {
-		return this.stat;
+
+	
+	// to get the current selected option
+	public int getType(Button option){
+		for(int i=0;i<options.length;i++){
+			if(options[i]==option) return i;
+		}
+		
+		return -1;
 	}
 }

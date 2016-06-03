@@ -1,6 +1,7 @@
 package littlemylyn.views;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.*;
@@ -9,6 +10,8 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.SWT;
+
+import littlemylyn.controllers.DBAction;
 import littlemylyn.entities.Task;
 import littlemylyn.model.ITaskManager;
 import littlemylyn.model.Node;
@@ -19,51 +22,64 @@ import java.util.List;
 
 public class LittleMylynView extends ViewPart {
 
-	private Action doubleClickAction;
+	private Action dbAction;
+	private ITaskManager manager ;
 
-	ITaskManager f = TaskManager.getManager();
-	List<Task> nodesList = f.getTasks();
-	Task[] nodesArray = nodesList.toArray(new Task[nodesList.size()]);
+	
 
+	public LittleMylynView() {
+		this.manager = TaskManager.getManager();
+	}
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
 	public static final String ID = "littlemylyn.views.DefaultView";
 
-	private TreeViewer viewer;
+	private static TreeViewer viewer;
 
 	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
-
 		@Override
 		public void dispose() {
 			// TODO Auto-generated method stub
 		}
 
 		@Override
-		public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
+		public void inputChanged(final Viewer viewer, Object oldobj, final Object newobj) {
 			// TODO Auto-generated method stub
+			System.err.println("Input Changed");
+			
+			Display.getDefault().asyncExec(new Runnable(){
+				public void run(){
+					((TreeViewer)viewer).getTree().setRedraw(true);
+				}
+			});
+
+		}
+		
+
+		@Override
+		public Object[] getChildren(Object node) {
+			return ((Node)node).getChildren().toArray();
 		}
 
 		@Override
-		public Object[] getChildren(Object arg0) {
-			return ((Node) arg0).getChildren().toArray();
-		}
-
-		@Override
-		public Object getParent(Object arg0) {
+		public Object getParent(Object node) {
 			// TODO Auto-generated method stub
-			return null;
+			return ((Node)node).getParent();
 		}
 
 		@Override
-		public boolean hasChildren(Object arg0) {
-			return ((Node) arg0).hasChildren();
+		public boolean hasChildren(Object node) {
+			return ((Node) node).hasChildren();
 		}
-
+	
 		@Override
-		public Object[] getElements(Object arg0) {
-			return nodesArray;
+		public Object[] getElements(Object _manager) {
+			return ((ITaskManager)_manager).getTasks().toArray();
 		}
+		
+
+	
 	}
 
 	class ViewLabelProvider extends LabelProvider {
@@ -74,57 +90,57 @@ public class LittleMylynView extends ViewPart {
 
 		public Image getImage(Object obj) {
 			String imageKey = ISharedImages.IMG_OBJ_ELEMENT;
-			if (obj instanceof Task)
-				imageKey = ISharedImages.IMG_OBJ_FOLDER;
+			if (obj instanceof Task){
+				if(((Task) obj).isActivated()){
+					imageKey=ISharedImages.IMG_OPEN_MARKER;
+				}else if(((Task)obj).isFinished()){
+					imageKey=ISharedImages.IMG_TOOL_DELETE_DISABLED;
+				}else{
+					imageKey = ISharedImages.IMG_OBJ_FOLDER;
+				}
+			}
+	
 			return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
 		}
 	}
 
-	// class NameSorter extends ViewerSorter { }
 
-	public LittleMylynView() {
-	}
 
 	public void createPartControl(Composite parent) {
-		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		// drillDownAdapter = new DrillDownAdapter(viewer);
-		viewer.setContentProvider(new ViewContentProvider());
-		viewer.setLabelProvider(new ViewLabelProvider());
-		// viewer.setSorter(new NameSorter());
-		viewer.setInput(nodesArray);
+		//only init once
+		if(viewer==null) {
+			viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+			viewer.setContentProvider(new ViewContentProvider());
+			viewer.setLabelProvider(new ViewLabelProvider());
+			viewer.setInput(this.manager);
+		}
 		makeActions();
 		hookDoubleClickAction();
 	}
 
 	private void makeActions() {
-		doubleClickAction = new Action() {
-			public void run() {
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection).getFirstElement();
-				if (obj instanceof Task) {
-					changeTask((Task) obj);
-				} else if ((obj instanceof NodeWrapper) && (((NodeWrapper) obj).getParent() instanceof List)) {
-					// TODO This is for Niu1234.
-				}
-			}
-		};
+		dbAction = new DBAction(this);
 	}
+	
+	
+	//getter setter
+	public static TreeViewer getViewer(){
+		return viewer;
+	}
+	
+	
+	
 
-	private void hookDoubleClickAction() {
+	
+	
+ 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				doubleClickAction.run();
+				dbAction.run();
 			}
 		});
 	}
 
-	private void changeTask(Task t) {
-		ChangeStatDialog dialog = new ChangeStatDialog(this.getViewSite().getShell(), t.getStat());
-		if (dialog.open() != InputDialog.OK)
-			return;
-		System.out.println(dialog.getStat());
-		t.setStat(dialog.getStat());
-	}
 
 	public void setFocus() {
 		viewer.getControl().setFocus();

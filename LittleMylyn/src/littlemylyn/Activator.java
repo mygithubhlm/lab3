@@ -45,6 +45,7 @@ public class Activator extends AbstractUIPlugin {
 	 * BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
+		System.out.println("Stop");
 		ResMonitor.shutdown();
 		plugin = null;
 		super.stop(context);
