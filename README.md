@@ -20,7 +20,7 @@ class of the current activated task. Make sure you are working on the actual tas
 ##2.Architecture
 >1.In a word, we adopt the __MVC__ view point to split the *modules* and the *workload*.
 
->2.Handlers and Actions are considered as __Controller__, while the simpe entity class and the 
+>2.Handlers and Actions are considered as __Controller__, while the simple entity class and the 
 advanced data manger together with the node __family__ for TreeViewer are considered as __model__. And __View__ is 
 actually about the MainView, those popup dialogs and other small widgets.
 
@@ -31,7 +31,7 @@ almost know everything.
 >1.__No one__ needs to know __everything__ about the project, even the group leader.
 
 >2.__Controller__ is actually a bridge between __View__ and __Model__, which means actually that
-the three parts of __MVC__ are not of eqivalent weight. However, to determine the interface of controllers is almost 
+the three parts of __MVC__ are not of equivalent weight. However, to determine the interface of controllers is almost 
 impossible ahead of time. Our solution is that the controller guy should work in pair with the view guy, which 
 is probably the most efficient way we could figure out.
 
