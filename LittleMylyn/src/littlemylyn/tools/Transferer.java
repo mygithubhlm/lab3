@@ -8,14 +8,28 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import org.json.JSONObject;
+import org.json.JSONArray;
 import org.json.JSONTokener;
 
-public class Transferer implements ITransferer {
 
+
+public class Transferer implements ITransferer {
 	@Override
-	public JSONObject retrieve(String path) {
-				File file = new File(path);
+	public JSONArray retrieve(String dir,String filename) {
+				File file = new File(dir+"/"+filename);
+				if(!file.exists()){
+					file=new File(dir);
+					if(!file.exists()) file.mkdirs();
+					try {
+						file=new File(file,filename);
+						file.createNewFile();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						System.err.println("Error when open file");
+					}
+				}
+				
+				
 				BufferedReader reader = null;
 				StringBuffer data = new StringBuffer();
 				//
@@ -26,38 +40,42 @@ public class Transferer implements ITransferer {
 						data.append(temp);
 					}
 				} catch (FileNotFoundException e) {
-					e.printStackTrace();
+					System.err.println("Error file not found");
 				} catch (IOException e) {
-					e.printStackTrace();
+					System.err.println("Error with IO");
 				} finally {
 					if (reader != null) {
 						try {
 							reader.close();
 						} catch (IOException e) {
-							e.printStackTrace();
+							System.err.println("Error with IO");
 						}
 					}
 				}
+				
+				if(data.toString().trim().length()==0) return new JSONArray();
+				
+				
 				JSONTokener jsonTokener = new JSONTokener(data.toString());
-				JSONObject retJSONObject;
-				retJSONObject = (JSONObject) jsonTokener.nextValue();
+				JSONArray retJSONObject;
+				retJSONObject = (JSONArray) jsonTokener.nextValue();
 				return retJSONObject;
 	}
 
 	@Override
-	public boolean dumpTo(JSONObject jobj, String path) {
+	public boolean dumpTo(JSONArray jobj, String path) {
 		// TODO Auto-generated method stub
 	    FileWriter fw;
 		try {
 			fw = new FileWriter(path);
-		    PrintWriter out = new PrintWriter(fw);
+		    PrintWriter out = new PrintWriter(fw);  
 		    out.write(jobj.toString());
 		    out.println();
 		    out.close();
 		    fw.close();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			System.out.println("Error When Dumpping");
+			System.err.println("Error When Dumpping");
 			return false;
 		}
 		

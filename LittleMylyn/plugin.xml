@@ -5,26 +5,26 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="DefaultCategory"
+            name="LittleMylyn"
             id="LittleMylyn">
       </category>
       <view
-            name="DefaultView"
+            name="LittleMylynView"
             icon="icons/sample.gif"
             category="LittleMylyn"
-            class="littlemylyn.views.DefaultView"
-            id="littlemylyn.views.DefaultView">
+            class="littlemylyn.views.LittleMylynView"
+            id="littlemylyn.views.LittleMylynView">
       </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
+            targetId="org.eclipse.jdt.ui.JavaPerspective">
          <view
                ratio="0.5"
                relative="org.eclipse.ui.views.ProblemView"
                relationship="right"
-               id="littlemylyn.views.DefaultView">
+               id="littlemylyn.views.LittleMylynView">
          </view>
       </perspectiveExtension>
    </extension>
@@ -34,5 +34,40 @@
             file="contexts.xml">
       </contexts>
    </extension>
-
+   
+   <extension point="org.eclipse.ui.commands">
+      <category
+            name="LittleMylyn"
+            description="..."
+            id="littlemylyn.commands.category"/> 
+   <command 
+            categoryId="littlemylyn.commands.category"  
+            name="New Task"
+            description="Create a new task."
+            id="littlemylyn.commands.newTask" />
+   </extension>
+   
+   <extension point="org.eclipse.ui.menus">
+       <menuContribution  
+            locationURI="menu:littlemylyn.views.LittleMylynView?after=additions">
+            <command
+               commandId="littlemylyn.commands.newTask"
+               id="littlemylyn.menus.newLittleMylynTask"
+               icon="icons/sample.gif" />
+      </menuContribution>
+   </extension>
+   
+   <extension point="org.eclipse.ui.handlers">
+      <handler
+         commandId="littlemylyn.commands.newTask"
+         class="littlemylyn.handlers.NewTaskHandler">
+      </handler> 
+   </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+   </extension>
+   
 </plugin>
